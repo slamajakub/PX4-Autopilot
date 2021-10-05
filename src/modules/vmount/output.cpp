@@ -231,7 +231,7 @@ void OutputBase::_calculate_angle_output(const hrt_abstime &t)
 		}
 
 		if (PX4_ISFINITE(_angle_velocity[i])) {
-			_angle_outputs[i] += dt * _angle_velocity[i];
+			_angle_outputs[i] = _angle_velocity[i];
 		}
 
 		if (compensate[i] && PX4_ISFINITE(euler_vehicle(i))) {
