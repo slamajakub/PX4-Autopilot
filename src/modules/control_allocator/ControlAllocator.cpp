@@ -266,7 +266,7 @@ ControlAllocator::Run()
 	perf_begin(_loop_perf);
 
 	// Check if parameters have changed
-	if (_parameter_update_sub.updated()) {
+	if (_parameter_update_sub.updated() && !_armed) {
 		// clear update
 		parameter_update_s param_update;
 		_parameter_update_sub.copy(&param_update);
@@ -282,6 +282,8 @@ ControlAllocator::Run()
 	vehicle_status_s vehicle_status;
 
 	if (_vehicle_status_sub.update(&vehicle_status)) {
+
+		_armed = vehicle_status.arming_state == vehicle_status_s::ARMING_STATE_ARMED;
 
 		ActuatorEffectiveness::FlightPhase flight_phase{ActuatorEffectiveness::FlightPhase::HOVER_FLIGHT};
 
