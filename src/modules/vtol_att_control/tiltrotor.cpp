@@ -467,7 +467,14 @@ void Tiltrotor::fill_actuator_outputs()
 	mc_out[actuator_controls_s::INDEX_YAW]   = mc_in[actuator_controls_s::INDEX_YAW]   * _mc_yaw_weight;
 
 	if (_vtol_schedule.flight_mode == vtol_mode::FW_MODE) {
-		mc_out[actuator_controls_s::INDEX_THROTTLE] = fw_in[actuator_controls_s::INDEX_THROTTLE];
+
+		// for the legacy mixing system pubish FW throttle on the MC output
+		if (_params->ctrl_alloc != 1) {
+			mc_out[actuator_controls_s::INDEX_THROTTLE] = fw_in[actuator_controls_s::INDEX_THROTTLE];
+
+		} else {
+			fw_out[actuator_controls_s::INDEX_THROTTLE] = fw_in[actuator_controls_s::INDEX_THROTTLE];
+		}
 
 		/* allow differential thrust if enabled */
 		if (_params->diff_thrust == 1) {

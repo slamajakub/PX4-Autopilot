@@ -546,7 +546,7 @@ void VtolAttitudeControl::publishThrustSetpoints(const hrt_abstime &timestamp_sa
 	v_thrust_sp.timestamp = hrt_absolute_time();
 	v_thrust_sp.timestamp_sample = timestamp_sample;
 	// TODO: separate thrust
-	v_thrust_sp.xyz[0] = _actuators_out_0.control[actuator_controls_s::INDEX_THROTTLE];
+	v_thrust_sp.xyz[0] = 0.0f;
 	v_thrust_sp.xyz[1] = 0.0f;
 	v_thrust_sp.xyz[2] = -_actuators_out_0.control[actuator_controls_s::INDEX_THROTTLE];
 	_vehicle_thrust_setpoint0_pub.publish(v_thrust_sp);

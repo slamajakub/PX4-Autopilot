@@ -360,6 +360,13 @@ ControlAllocator::Run()
 			c[1](3) = vehicle_thrust_setpoint.xyz[0];
 			c[1](4) = vehicle_thrust_setpoint.xyz[1];
 			c[1](5) = vehicle_thrust_setpoint.xyz[2];
+
+			// For Tiltrotor we use c[0](5) also for thrust allocation in FW flight, not just in MC
+			if (_effectiveness_source_id == EffectivenessSource::TILTROTOR_VTOL
+			    && _actuator_effectiveness->getFlightPhase() == ActuatorEffectiveness::FlightPhase::FORWARD_FLIGHT) {
+				c[0](5) = -vehicle_thrust_setpoint.xyz[0];
+				c[1](3) = 0.0f;
+			}
 		}
 
 		for (int i = 0; i < _num_control_allocation; ++i) {
