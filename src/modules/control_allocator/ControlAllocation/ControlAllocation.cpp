@@ -56,13 +56,7 @@ ControlAllocation::setEffectivenessMatrix(
 	_effectiveness = effectiveness;
 	_actuator_trim = actuator_trim;
 	clipActuatorSetpoint(_actuator_trim);
-	_control_trim = _effectiveness * _actuator_trim;
 	_num_actuators = num_actuators;
-
-	// make sure unused actuators are initialized to trim
-	for (int i = num_actuators; i < NUM_ACTUATORS; ++i) {
-		_actuator_sp(i) = _actuator_trim(i);
-	}
 }
 
 void
@@ -108,4 +102,21 @@ const
 	}
 
 	return actuator_normalized;
+}
+
+void ControlAllocation::applySlewRateLimit(float dt)
+{
+	for (int i = 0; i < _num_actuators; i++) {
+		if (_actuator_slew_rate_limit(i) > FLT_EPSILON) {
+			float delta_sp_max = dt * (_actuator_max(i) - _actuator_min(i)) / _actuator_slew_rate_limit(i);
+			float delta_sp = _actuator_sp(i) - _prev_actuator_sp(i);
+
+			if (delta_sp > delta_sp_max) {
+				_actuator_sp(i) = _prev_actuator_sp(i) + delta_sp_max;
+
+			} else if (delta_sp < -delta_sp_max) {
+				_actuator_sp(i) = _prev_actuator_sp(i) - delta_sp_max;
+			}
+		}
+	}
 }

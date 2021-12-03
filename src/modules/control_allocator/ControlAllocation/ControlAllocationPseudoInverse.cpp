@@ -120,6 +120,8 @@ ControlAllocationPseudoInverse::allocate()
 	//Compute new gains if needed
 	updatePseudoInverse();
 
+	_prev_actuator_sp = _actuator_sp;
+
 	// Allocate
-	_actuator_sp = _actuator_trim + _mix * (_control_sp - _control_trim);
+	_actuator_sp = _actuator_trim + _mix * _control_sp;
 }

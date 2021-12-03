@@ -47,6 +47,8 @@ ControlAllocationSequentialDesaturation::allocate()
 	//Compute new gains if needed
 	updatePseudoInverse();
 
+	_prev_actuator_sp = _actuator_sp;
+
 	switch (_param_mc_airmode.get()) {
 	case 1:
 		mixAirmodeRP();
@@ -126,11 +128,11 @@ ControlAllocationSequentialDesaturation::mixAirmodeRP()
 
 	for (int i = 0; i < _num_actuators; i++) {
 		_actuator_sp(i) = _actuator_trim(i) +
-				  _mix(i, ControlAxis::ROLL) * (_control_sp(ControlAxis::ROLL) - _control_trim(ControlAxis::ROLL)) +
-				  _mix(i, ControlAxis::PITCH) * (_control_sp(ControlAxis::PITCH) - _control_trim(ControlAxis::PITCH)) +
-				  _mix(i, ControlAxis::THRUST_X) * (_control_sp(ControlAxis::THRUST_X) - _control_trim(ControlAxis::THRUST_X)) +
-				  _mix(i, ControlAxis::THRUST_Y) * (_control_sp(ControlAxis::THRUST_Y) - _control_trim(ControlAxis::THRUST_Y)) +
-				  _mix(i, ControlAxis::THRUST_Z) * (_control_sp(ControlAxis::THRUST_Z) - _control_trim(ControlAxis::THRUST_Z));
+				  _mix(i, ControlAxis::ROLL) * _control_sp(ControlAxis::ROLL) +
+				  _mix(i, ControlAxis::PITCH) * _control_sp(ControlAxis::PITCH) +
+				  _mix(i, ControlAxis::THRUST_X) * _control_sp(ControlAxis::THRUST_X) +
+				  _mix(i, ControlAxis::THRUST_Y) * _control_sp(ControlAxis::THRUST_Y) +
+				  _mix(i, ControlAxis::THRUST_Z) * _control_sp(ControlAxis::THRUST_Z);
 		thrust_z(i) = _mix(i, ControlAxis::THRUST_Z);
 	}
 
@@ -151,12 +153,12 @@ ControlAllocationSequentialDesaturation::mixAirmodeRPY()
 
 	for (int i = 0; i < _num_actuators; i++) {
 		_actuator_sp(i) = _actuator_trim(i) +
-				  _mix(i, ControlAxis::ROLL) * (_control_sp(ControlAxis::ROLL) - _control_trim(ControlAxis::ROLL)) +
-				  _mix(i, ControlAxis::PITCH) * (_control_sp(ControlAxis::PITCH) - _control_trim(ControlAxis::PITCH)) +
-				  _mix(i, ControlAxis::YAW) * (_control_sp(ControlAxis::YAW) - _control_trim(ControlAxis::YAW)) +
-				  _mix(i, ControlAxis::THRUST_X) * (_control_sp(ControlAxis::THRUST_X) - _control_trim(ControlAxis::THRUST_X)) +
-				  _mix(i, ControlAxis::THRUST_Y) * (_control_sp(ControlAxis::THRUST_Y) - _control_trim(ControlAxis::THRUST_Y)) +
-				  _mix(i, ControlAxis::THRUST_Z) * (_control_sp(ControlAxis::THRUST_Z) - _control_trim(ControlAxis::THRUST_Z));
+				  _mix(i, ControlAxis::ROLL) * _control_sp(ControlAxis::ROLL) +
+				  _mix(i, ControlAxis::PITCH) * _control_sp(ControlAxis::PITCH) +
+				  _mix(i, ControlAxis::YAW) * _control_sp(ControlAxis::YAW) +
+				  _mix(i, ControlAxis::THRUST_X) * _control_sp(ControlAxis::THRUST_X) +
+				  _mix(i, ControlAxis::THRUST_Y) * _control_sp(ControlAxis::THRUST_Y) +
+				  _mix(i, ControlAxis::THRUST_Z) * _control_sp(ControlAxis::THRUST_Z);
 		thrust_z(i) = _mix(i, ControlAxis::THRUST_Z);
 		yaw(i) = _mix(i, ControlAxis::YAW);
 	}
@@ -180,11 +182,11 @@ ControlAllocationSequentialDesaturation::mixAirmodeDisabled()
 
 	for (int i = 0; i < _num_actuators; i++) {
 		_actuator_sp(i) = _actuator_trim(i) +
-				  _mix(i, ControlAxis::ROLL) * (_control_sp(ControlAxis::ROLL) - _control_trim(ControlAxis::ROLL)) +
-				  _mix(i, ControlAxis::PITCH) * (_control_sp(ControlAxis::PITCH) - _control_trim(ControlAxis::PITCH)) +
-				  _mix(i, ControlAxis::THRUST_X) * (_control_sp(ControlAxis::THRUST_X) - _control_trim(ControlAxis::THRUST_X)) +
-				  _mix(i, ControlAxis::THRUST_Y) * (_control_sp(ControlAxis::THRUST_Y) - _control_trim(ControlAxis::THRUST_Y)) +
-				  _mix(i, ControlAxis::THRUST_Z) * (_control_sp(ControlAxis::THRUST_Z) - _control_trim(ControlAxis::THRUST_Z));
+				  _mix(i, ControlAxis::ROLL) * _control_sp(ControlAxis::ROLL) +
+				  _mix(i, ControlAxis::PITCH) * _control_sp(ControlAxis::PITCH) +
+				  _mix(i, ControlAxis::THRUST_X) * _control_sp(ControlAxis::THRUST_X) +
+				  _mix(i, ControlAxis::THRUST_Y) * _control_sp(ControlAxis::THRUST_Y) +
+				  _mix(i, ControlAxis::THRUST_Z) * _control_sp(ControlAxis::THRUST_Z);
 		thrust_z(i) = _mix(i, ControlAxis::THRUST_Z);
 		roll(i) = _mix(i, ControlAxis::ROLL);
 		pitch(i) = _mix(i, ControlAxis::PITCH);
@@ -209,7 +211,7 @@ ControlAllocationSequentialDesaturation::mixYaw()
 	ActuatorVector thrust_z;
 
 	for (int i = 0; i < _num_actuators; i++) {
-		_actuator_sp(i) += _mix(i, ControlAxis::YAW) * (_control_sp(ControlAxis::YAW) - _control_trim(ControlAxis::YAW));
+		_actuator_sp(i) += _mix(i, ControlAxis::YAW) * _control_sp(ControlAxis::YAW);
 		yaw(i) = _mix(i, ControlAxis::YAW);
 		thrust_z(i) = _mix(i, ControlAxis::THRUST_Z);
 	}
