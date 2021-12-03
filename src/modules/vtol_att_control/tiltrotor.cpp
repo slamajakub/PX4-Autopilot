@@ -287,7 +287,6 @@ void Tiltrotor::update_mc_state()
 		// normal operation
 		_tilt_control = VtolType::pusher_assist() + _params_tiltrotor.tilt_mc;
 		_mc_yaw_weight = 1.0f;
-		_v_att_sp->thrust_body[2] = Tiltrotor::thrust_compensation_for_tilt();
 	}
 
 }
@@ -497,19 +496,6 @@ void Tiltrotor::fill_actuator_outputs()
 	_actuators_out_1->timestamp_sample = _actuators_fw_in->timestamp_sample;
 
 	_actuators_out_0->timestamp = _actuators_out_1->timestamp = hrt_absolute_time();
-}
-
-/*
- * Increase combined thrust of MC propellers if motors are tilted. Assumes that all MC motors are tilted equally.
- */
-
-float Tiltrotor::thrust_compensation_for_tilt()
-{
-	// only compensate for tilt angle up to 0.5 * max tilt
-	float compensated_tilt = math::constrain(_tilt_control, 0.0f, 0.5f);
-
-	// increase vertical thrust by 1/cos(tilt), limit to [-1,0]
-	return math::constrain(_v_att_sp->thrust_body[2] / cosf(compensated_tilt * M_PI_2_F), -1.0f, 0.0f);
 }
 
 void Tiltrotor::blendThrottleAfterFrontTransition(float scale)
